@@ -1,0 +1,466 @@
+basePath: /
+definitions:
+  handler.createProductoRequest:
+    properties:
+      battery_capacity:
+        type: string
+      brand:
+        type: string
+      camera:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      image_url:
+        type: string
+      memory:
+        type: string
+      model_version:
+        type: string
+      name:
+        type: string
+      os:
+        type: string
+      price:
+        type: number
+      size:
+        type: string
+      specifications:
+        additionalProperties:
+          type: string
+        type: object
+      storage:
+        type: string
+      weight:
+        type: string
+    required:
+    - name
+    - price
+    type: object
+  handler.insertManyError:
+    properties:
+      index:
+        type: integer
+      message:
+        type: string
+    type: object
+  handler.insertManyResponse:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/handler.insertManyError'
+        type: array
+      inserted:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/handler.productoResponse'
+        type: array
+    type: object
+  handler.loginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  handler.productoResponse:
+    properties:
+      battery_capacity:
+        type: string
+      brand:
+        type: string
+      camera:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      memory:
+        type: string
+      model_version:
+        type: string
+      name:
+        type: string
+      os:
+        type: string
+      price:
+        type: number
+      rating:
+        type: number
+      size:
+        type: string
+      specifications:
+        additionalProperties:
+          type: string
+        type: object
+      storage:
+        type: string
+      weight:
+        type: string
+    type: object
+  handler.registerRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  handler.updateProductoRequest:
+    properties:
+      battery_capacity:
+        type: string
+      brand:
+        type: string
+      camera:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      image_url:
+        type: string
+      memory:
+        type: string
+      model_version:
+        type: string
+      name:
+        type: string
+      os:
+        type: string
+      price:
+        type: number
+      size:
+        type: string
+      specifications:
+        additionalProperties:
+          type: string
+        type: object
+      storage:
+        type: string
+      weight:
+        type: string
+    required:
+    - name
+    - price
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API REST para gestión de productos estilo MercadoLibre.
+  title: Go-Meli API
+  version: "1.0"
+paths:
+  /api/v1/productos:
+    get:
+      description: Obtiene todos los productos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handler.productoResponse'
+            type: array
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Listar productos
+      tags:
+      - Productos
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo producto
+      parameters:
+      - description: Datos del producto
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.createProductoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.productoResponse'
+        "400":
+          description: error de validación
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Crear producto
+      tags:
+      - Productos
+  /api/v1/productos/{id}:
+    delete:
+      description: Elimina un producto por su ID
+      parameters:
+      - description: ID del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: producto eliminado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: producto no encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Eliminar producto
+      tags:
+      - Productos
+    get:
+      description: Obtiene un producto por su ID
+      parameters:
+      - description: ID del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.productoResponse'
+        "404":
+          description: producto no encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Obtener producto por ID
+      tags:
+      - Productos
+    put:
+      consumes:
+      - application/json
+      description: Actualiza un producto existente por su ID
+      parameters:
+      - description: ID del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Datos actualizados
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.updateProductoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.productoResponse'
+        "400":
+          description: error de validación
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: producto no encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Actualizar producto
+      tags:
+      - Productos
+  /api/v1/productos/many:
+    post:
+      consumes:
+      - application/json
+      description: Crea múltiples productos en una sola petición
+      parameters:
+      - description: Lista de productos
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/handler.createProductoRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.insertManyResponse'
+        "400":
+          description: lista vacía o error de validación
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: algunos productos fallaron
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Insertar productos en lote
+      tags:
+      - Productos
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Autentica un usuario y devuelve un token JWT
+      parameters:
+      - description: Credenciales
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token JWT
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: error de validación
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: credenciales inválidas
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Iniciar sesión
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo usuario con email y password
+      parameters:
+      - description: Datos de registro
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: usuario registrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: error de validación
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: email ya registrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: error interno
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Registrar usuario
+      tags:
+      - Auth
+securityDefinitions:
+  BearerAuth:
+    description: 'Ingresa el token JWT con el prefijo "Bearer ". Ejemplo: "Bearer
+      eyJhbGci..."'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

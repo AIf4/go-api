@@ -6,6 +6,8 @@ import (
 	"go-meli/internal/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 )
@@ -23,6 +25,9 @@ func Setup(
 	r.Use(middleware.Logger(log))
 	r.Use(middleware.Recovery(log))
 	r.Use(limiter.Middleware())
+
+	// swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// sub-routers
 	registerAuthRoutes(r, authHandler)

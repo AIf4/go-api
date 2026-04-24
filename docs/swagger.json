@@ -1,0 +1,714 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API REST para gestión de productos estilo MercadoLibre.",
+        "title": "Go-Meli API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/productos": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Obtiene todos los productos",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Listar productos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handler.productoResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crea un nuevo producto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Crear producto",
+                "parameters": [
+                    {
+                        "description": "Datos del producto",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.createProductoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.productoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "error de validación",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/productos/many": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crea múltiples productos en una sola petición",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Insertar productos en lote",
+                "parameters": [
+                    {
+                        "description": "Lista de productos",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handler.createProductoRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.insertManyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "lista vacía o error de validación",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "algunos productos fallaron",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/productos/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Obtiene un producto por su ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Obtener producto por ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del producto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.productoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "producto no encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Actualiza un producto existente por su ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Actualizar producto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del producto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Datos actualizados",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.updateProductoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.productoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "error de validación",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "producto no encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Elimina un producto por su ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Eliminar producto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del producto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "producto eliminado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "producto no encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "Autentica un usuario y devuelve un token JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Iniciar sesión",
+                "parameters": [
+                    {
+                        "description": "Credenciales",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "token JWT",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "error de validación",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "credenciales inválidas",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Crea un nuevo usuario con email y password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrar usuario",
+                "parameters": [
+                    {
+                        "description": "Datos de registro",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.registerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "usuario registrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "error de validación",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "email ya registrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.createProductoRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "price"
+            ],
+            "properties": {
+                "battery_capacity": {
+                    "type": "string"
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "camera": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "memory": {
+                    "type": "string"
+                },
+                "model_version": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "size": {
+                    "type": "string"
+                },
+                "specifications": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "storage": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.insertManyError": {
+            "type": "object",
+            "properties": {
+                "index": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.insertManyResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.insertManyError"
+                    }
+                },
+                "inserted": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.productoResponse"
+                    }
+                }
+            }
+        },
+        "handler.loginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.productoResponse": {
+            "type": "object",
+            "properties": {
+                "battery_capacity": {
+                    "type": "string"
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "camera": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "memory": {
+                    "type": "string"
+                },
+                "model_version": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "size": {
+                    "type": "string"
+                },
+                "specifications": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "storage": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.registerRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "handler.updateProductoRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "price"
+            ],
+            "properties": {
+                "battery_capacity": {
+                    "type": "string"
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "camera": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "memory": {
+                    "type": "string"
+                },
+                "model_version": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "size": {
+                    "type": "string"
+                },
+                "specifications": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "storage": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Ingresa el token JWT con el prefijo \"Bearer \". Ejemplo: \"Bearer eyJhbGci...\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

@@ -29,6 +29,18 @@ type loginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+// Register godoc
+// @Summary     Registrar usuario
+// @Description Crea un nuevo usuario con email y password
+// @Tags        Auth
+// @Accept      json
+// @Produce     json
+// @Param       body body     registerRequest true "Datos de registro"
+// @Success     201  {object} map[string]string "usuario registrado"
+// @Failure     400  {object} map[string]string "error de validación"
+// @Failure     409  {object} map[string]string "email ya registrado"
+// @Failure     500  {object} map[string]string "error interno"
+// @Router      /auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req registerRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -52,6 +64,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "usuario registrado"})
 }
 
+// Login godoc
+// @Summary     Iniciar sesión
+// @Description Autentica un usuario y devuelve un token JWT
+// @Tags        Auth
+// @Accept      json
+// @Produce     json
+// @Param       body body     loginRequest true "Credenciales"
+// @Success     200  {object} map[string]string "token JWT"
+// @Failure     400  {object} map[string]string "error de validación"
+// @Failure     401  {object} map[string]string "credenciales inválidas"
+// @Failure     500  {object} map[string]string "error interno"
+// @Router      /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req loginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

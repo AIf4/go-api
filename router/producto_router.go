@@ -10,16 +10,23 @@ import (
 
 func registerProductoRoutes(r *gin.Engine, productoHandler *handler.ProductoHandler, cfg *config.Config) {
 	v1 := r.Group("/api/v1")
-	v1.Use(middleware.JWTAuth(cfg)) // JWT solo para estas rutas
+
+	// JWT solo para estas rutas
+	//
+
+	productosPublic := v1.Group("/productos")
 	{
-		productos := v1.Group("/productos")
-		{
-			productos.GET("", productoHandler.GetAll)
-			productos.GET("/:id", productoHandler.GetByID)
-			productos.POST("", productoHandler.Create)
-			productos.POST("/many", productoHandler.InsertMany)
-			productos.PUT("/:id", productoHandler.Update)
-			productos.DELETE("/:id", productoHandler.Delete)
-		}
+		productosPublic.GET("", productoHandler.GetAll)
+		productosPublic.GET("/:id", productoHandler.GetByID)
 	}
+
+	productosPrivate := v1.Group("/productos")
+	productosPrivate.Use(middleware.JWTAuth(cfg))
+	{
+		productosPrivate.POST("", productoHandler.Create)
+		productosPrivate.POST("/many", productoHandler.InsertMany)
+		productosPrivate.PUT("/:id", productoHandler.Update)
+		productosPrivate.DELETE("/:id", productoHandler.Delete)
+	}
+
 }

@@ -18,3 +18,4 @@
 {"level":"info","ts":"2026-04-23T23:37:38.464-0500","caller":"go-meli/main.go:70","msg":"servidor corriendo","puerto":"8080"}
 {"level":"warn","ts":"2026-04-23T23:42:36.824-0500","caller":"middleware/logger.go:43","msg":"client error","method":"POST","path":"/auth/register","ip":"::1","status":409,"latency":2}
 {"level":"info","ts":"2026-04-23T23:42:59.845-0500","caller":"middleware/logger.go:45","msg":"request","method":"POST","path":"/auth/login","ip":"::1","status":200,"latency":42}
+{"level":"info","ts":"2026-04-24T00:00:45.509-0500","caller":"go-meli/main.go:78","msg":"apagando servidor..."}

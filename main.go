@@ -1,3 +1,14 @@
+// @title           Go-Meli API
+// @version         1.0
+// @description     API REST para gestión de productos estilo MercadoLibre.
+// @host            localhost:8080
+// @BasePath        /
+
+// @securityDefinitions.apikey BearerAuth
+// @in   header
+// @name Authorization
+// @description Ingresa el token JWT con el prefijo "Bearer ". Ejemplo: "Bearer eyJhbGci..."
+
 package main
 
 import (
@@ -16,6 +27,8 @@ import (
 	"go-meli/internal/repository"
 	"go-meli/internal/service"
 	"go-meli/router"
+
+	_ "go-meli/docs"
 
 	"go.uber.org/zap"
 )

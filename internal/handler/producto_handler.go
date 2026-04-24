@@ -90,6 +90,15 @@ type insertManyError struct {
 
 // --- Handlers ---
 
+// GetAll godoc
+// @Summary     Listar productos
+// @Description Obtiene todos los productos
+// @Tags        Productos
+// @Produce     json
+// @Security    BearerAuth
+// @Success     200 {array}  productoResponse
+// @Failure     500 {object} map[string]string "error interno"
+// @Router      /api/v1/productos [get]
 func (h *ProductoHandler) GetAll(c *gin.Context) {
 	productos, err := h.service.GetAll(c.Request.Context())
 	if err != nil {
@@ -105,6 +114,17 @@ func (h *ProductoHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// GetByID godoc
+// @Summary     Obtener producto por ID
+// @Description Obtiene un producto por su ID
+// @Tags        Productos
+// @Produce     json
+// @Security    BearerAuth
+// @Param       id  path     string true "ID del producto"
+// @Success     200 {object} productoResponse
+// @Failure     404 {object} map[string]string "producto no encontrado"
+// @Failure     500 {object} map[string]string "error interno"
+// @Router      /api/v1/productos/{id} [get]
 func (h *ProductoHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -121,6 +141,18 @@ func (h *ProductoHandler) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, toResponse(producto))
 }
 
+// Create godoc
+// @Summary     Crear producto
+// @Description Crea un nuevo producto
+// @Tags        Productos
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Param       body body     createProductoRequest true "Datos del producto"
+// @Success     201  {object} productoResponse
+// @Failure     400  {object} map[string]string "error de validación"
+// @Failure     500  {object} map[string]string "error interno"
+// @Router      /api/v1/productos [post]
 func (h *ProductoHandler) Create(c *gin.Context) {
 	var req createProductoRequest
 
@@ -161,6 +193,18 @@ func (h *ProductoHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, toResponse(producto))
 }
 
+// InsertMany godoc
+// @Summary     Insertar productos en lote
+// @Description Crea múltiples productos en una sola petición
+// @Tags        Productos
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Param       body body     []createProductoRequest true "Lista de productos"
+// @Success     201  {object} insertManyResponse
+// @Failure     400  {object} map[string]string "lista vacía o error de validación"
+// @Failure     422  {object} map[string]string "algunos productos fallaron"
+// @Router      /api/v1/productos/many [post]
 func (h *ProductoHandler) InsertMany(c *gin.Context) {
 	// recibe un array de createProductoRequest directamente
 	var req []createProductoRequest
@@ -222,6 +266,20 @@ func (h *ProductoHandler) InsertMany(c *gin.Context) {
 	})
 }
 
+// Update godoc
+// @Summary     Actualizar producto
+// @Description Actualiza un producto existente por su ID
+// @Tags        Productos
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Param       id   path     string               true "ID del producto"
+// @Param       body body     updateProductoRequest true "Datos actualizados"
+// @Success     200  {object} productoResponse
+// @Failure     400  {object} map[string]string "error de validación"
+// @Failure     404  {object} map[string]string "producto no encontrado"
+// @Failure     500  {object} map[string]string "error interno"
+// @Router      /api/v1/productos/{id} [put]
 func (h *ProductoHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 
@@ -263,6 +321,17 @@ func (h *ProductoHandler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, toResponse(producto))
 }
 
+// Delete godoc
+// @Summary     Eliminar producto
+// @Description Elimina un producto por su ID
+// @Tags        Productos
+// @Produce     json
+// @Security    BearerAuth
+// @Param       id  path     string true "ID del producto"
+// @Success     200 {object} map[string]string "producto eliminado"
+// @Failure     404 {object} map[string]string "producto no encontrado"
+// @Failure     500 {object} map[string]string "error interno"
+// @Router      /api/v1/productos/{id} [delete]
 func (h *ProductoHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
