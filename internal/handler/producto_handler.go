@@ -141,6 +141,10 @@ func (h *ProductoHandler) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, toResponse(producto))
 }
 
+func (h *ProductoHandler) CompareProductos(c *gin.Context) {
+
+}
+
 // Create godoc
 // @Summary     Crear producto
 // @Description Crea un nuevo producto

@@ -88,6 +88,13 @@ func (s *productoService) GetByID(ctx context.Context, id string) (*domain.Produ
 	return producto, nil
 }
 
+/* func (s *productoService) CompareProductos(ctx context.Context, id1, id2 string) (*domain.Producto, *domain.Producto, error) {
+	if id1 == "" || id2 == "" {
+		return nil, nil, domain.ErrNoEncontrado
+	}
+
+} */
+
 func (s *productoService) Create(ctx context.Context, cmd CreateProductoCmd) (*domain.Producto, error) {
 	// 1. construye y valida la entidad usando el constructor del dominio
 	producto, err := domain.NewProducto(cmd.Name, cmd.Price)
