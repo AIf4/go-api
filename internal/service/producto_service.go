@@ -12,6 +12,7 @@ import (
 type ProductoService interface {
 	GetAll(ctx context.Context) ([]*domain.Producto, error)
 	GetByID(ctx context.Context, id string) (*domain.Producto, error)
+	FindInIDs(ctx context.Context, ids []string) (*domain.FindInResult, error)
 	Create(ctx context.Context, cmd CreateProductoCmd) (*domain.Producto, error)
 	Update(ctx context.Context, cmd UpdateProductoCmd) (*domain.Producto, error)
 	Delete(ctx context.Context, id string) error
@@ -88,12 +89,23 @@ func (s *productoService) GetByID(ctx context.Context, id string) (*domain.Produ
 	return producto, nil
 }
 
-/* func (s *productoService) CompareProductos(ctx context.Context, id1, id2 string) (*domain.Producto, *domain.Producto, error) {
-	if id1 == "" || id2 == "" {
-		return nil, nil, domain.ErrNoEncontrado
+func (s *productoService) FindInIDs(ctx context.Context, ids []string) (*domain.FindInResult, error) {
+	// validación de negocio — no tiene sentido buscar una lista vacía
+	if len(ids) == 0 {
+		return &domain.FindInResult{
+			Found:    make([]*domain.Producto, 0),
+			NotFound: make([]string, 0),
+		}, nil
 	}
 
-} */
+	// delega al repositorio — él sabe cómo hablar con Mongo
+	result, err := s.repo.FindInIDs(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("buscando productos por ids: %w", err)
+	}
+
+	return result, nil
+}
 
 func (s *productoService) Create(ctx context.Context, cmd CreateProductoCmd) (*domain.Producto, error) {
 	// 1. construye y valida la entidad usando el constructor del dominio

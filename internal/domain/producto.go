@@ -27,6 +27,11 @@ type Producto struct {
 	Specifications map[string]string
 }
 
+type FindInResult struct {
+	Found    []*Producto // productos que sí existen
+	NotFound []string    // IDs que no se encontraron
+}
+
 // NewProducto valida y construye un producto
 func NewProducto(name string, price float64) (*Producto, error) {
 	if name == "" {
@@ -47,6 +52,7 @@ func StrPtr(s string) *string {
 }
 
 var (
+	ErrIDInvalido     = errors.New("id inválido")
 	ErrNameRequerido  = errors.New("name es requerido")
 	ErrPrecioInvalido = errors.New("precio debe ser mayor a 0")
 	ErrNoEncontrado   = errors.New("producto no encontrado")

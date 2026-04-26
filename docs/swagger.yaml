@@ -38,6 +38,27 @@ definitions:
     - name
     - price
     type: object
+  handler.findInIDsRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - ids
+    type: object
+  handler.findInIDsResponse:
+    properties:
+      found:
+        items:
+          $ref: '#/definitions/handler.productoResponse'
+        type: array
+      not_found:
+        items:
+          type: string
+        type: array
+    type: object
   handler.insertManyError:
     properties:
       index:
@@ -332,6 +353,40 @@ paths:
       security:
       - BearerAuth: []
       summary: Actualizar producto
+      tags:
+      - Productos
+  /api/v1/productos/find-in:
+    post:
+      consumes:
+      - application/json
+      description: Retorna los productos encontrados y los IDs no encontrados
+      parameters:
+      - description: Lista de IDs a buscar
+        in: body
+        name: ids
+        required: true
+        schema:
+          $ref: '#/definitions/handler.findInIDsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.findInIDsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Buscar productos por IDs
       tags:
       - Productos
   /api/v1/productos/many:

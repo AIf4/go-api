@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Port          string
 	URI           string
+	DB            string        // nombre de la base de datos
 	RateLimit     float64       // tokens por segundo
 	RateBurst     int           // capacidad máxima del balde
 	LogDir        string        // directorio para archivos de log
@@ -24,6 +25,7 @@ func LoadConfig() *Config {
 	return &Config{
 		Port:          getEnv("PORT", "8080"),
 		URI:           RequiredEnv("MONGO_URI"),
+		DB:            getEnv("MONGO_DB", "go_meli"),
 		RateLimit:     getEnvFloat("RATE_LIMIT", 5),
 		RateBurst:     getEnvInt("RATE_BURST", 10),
 		LogDir:        getEnv("LOG_DIR", "logs"),

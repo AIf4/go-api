@@ -65,7 +65,7 @@ func (r *mongoProductoRepository) FindAll(ctx context.Context) ([]*domain.Produc
 func (r *mongoProductoRepository) FindByID(ctx context.Context, id string) (*domain.Producto, error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return nil, fmt.Errorf("id inválido: %w", err)
+		return nil, domain.ErrIDInvalido
 	}
 
 	var doc productoDoc
@@ -78,6 +78,60 @@ func (r *mongoProductoRepository) FindByID(ctx context.Context, id string) (*dom
 	}
 
 	return toDomain(doc), nil
+}
+
+func (r *mongoProductoRepository) FindInIDs(ctx context.Context, ids []string) (*domain.FindInResult, error) {
+	// convierte strings a ObjectIDs — los inválidos van directo a NotFound
+	oids := make([]primitive.ObjectID, 0, len(ids))
+	result := &domain.FindInResult{
+		Found:    make([]*domain.Producto, 0),
+		NotFound: make([]string, 0),
+	}
+
+	for _, id := range ids {
+		oid, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			// ID con formato inválido — no puede existir en Mongo
+			result.NotFound = append(result.NotFound, id)
+			continue
+		}
+		oids = append(oids, oid)
+	}
+
+	// si todos los IDs eran inválidos, no hay nada que buscar
+	if len(oids) == 0 {
+		result.NotFound = ids
+		return result, nil
+	}
+
+	// una sola query con todos los IDs válidos
+	cursor, err := r.collection.Find(ctx, bson.M{"_id": bson.M{"$in": oids}})
+	if err != nil {
+		return nil, fmt.Errorf("buscando productos: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var docs []productoDoc
+	if err := cursor.All(ctx, &docs); err != nil {
+		return nil, fmt.Errorf("decodificando productos: %w", err)
+	}
+
+	// construye un set de IDs encontrados para comparar rápido
+	foundIDs := make(map[string]bool, len(docs))
+	for _, doc := range docs {
+		producto := toDomain(doc)
+		result.Found = append(result.Found, producto)
+		foundIDs[producto.ID] = true
+	}
+
+	// compara los IDs solicitados contra los encontrados
+	for _, id := range ids {
+		if !foundIDs[id] {
+			result.NotFound = append(result.NotFound, id)
+		}
+	}
+
+	return result, nil
 }
 
 func (r *mongoProductoRepository) Create(ctx context.Context, producto *domain.Producto) error {

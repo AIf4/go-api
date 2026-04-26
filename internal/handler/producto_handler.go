@@ -20,7 +20,14 @@ func NewProductoHandler(svc service.ProductoService) *ProductoHandler {
 }
 
 // --- Request / Response structs — los tags json viven SOLO aquí ---
+type findInIDsRequest struct {
+	IDs []string `json:"ids" binding:"required,min=1"`
+}
 
+type findInIDsResponse struct {
+	Found    []productoResponse `json:"found"`
+	NotFound []string           `json:"not_found"`
+}
 type createProductoRequest struct {
 	Name            string            `json:"name"             binding:"required"`
 	ImageURL        string            `json:"image_url"`
@@ -134,6 +141,10 @@ func (h *ProductoHandler) GetByID(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "producto no encontrado"})
 			return
 		}
+		if errors.Is(err, domain.ErrIDInvalido) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "id inválido"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "error obteniendo producto"})
 		return
 	}
@@ -141,8 +152,49 @@ func (h *ProductoHandler) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, toResponse(producto))
 }
 
-func (h *ProductoHandler) CompareProductos(c *gin.Context) {
+// @Summary      Buscar productos por IDs
+// @Description  Retorna los productos encontrados y los IDs no encontrados
+// @Tags         Productos
+// @Accept       json
+// @Produce      json
+// @Param        ids  body      findInIDsRequest  true  "Lista de IDs a buscar"
+// @Success      200  {object}  findInIDsResponse
+// @Failure      400  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /api/v1/productos/find-in [post]
+func (h *ProductoHandler) FindInIDs(c *gin.Context) {
+	// paso 1 — parsea y valida el body
+	var req findInIDsRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	// paso 2 — llama al service con los IDs
+	result, err := h.service.FindInIDs(c.Request.Context(), req.IDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error buscando productos"})
+		return
+	}
+
+	// paso 3 — construye la respuesta
+	// convierte []*domain.Producto → []productoResponse
+	found := make([]productoResponse, len(result.Found))
+	for i, p := range result.Found {
+		found[i] = toResponse(p)
+	}
+
+	// notFound ya es []string — no necesita conversión
+	// pero garantizamos [] en lugar de null si está vacío
+	notFound := result.NotFound
+	if notFound == nil {
+		notFound = make([]string, 0)
+	}
+
+	c.JSON(http.StatusOK, findInIDsResponse{
+		Found:    found,
+		NotFound: notFound,
+	})
 }
 
 // Create godoc

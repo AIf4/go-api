@@ -1,3 +1,4 @@
 .env
 .claude
 logs
+__debug_bin.exe

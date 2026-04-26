@@ -18,6 +18,7 @@ func registerProductoRoutes(r *gin.Engine, productoHandler *handler.ProductoHand
 	{
 		productosPublic.GET("", productoHandler.GetAll)
 		productosPublic.GET("/:id", productoHandler.GetByID)
+		productosPublic.POST("/find-in", productoHandler.FindInIDs)
 	}
 
 	productosPrivate := v1.Group("/productos")

@@ -43,7 +43,7 @@ func NewMongoDB(cfg *config.Config) (*MongoDB, error) {
 	// devuelve una instancia de MongoDB con el cliente y la base de datos conectados
 	return &MongoDB{
 		Client:   client,
-		Database: client.Database("go-meli"), // nombre de tu base de datos
+		Database: client.Database(cfg.DB), // nombre de tu base de datos
 	}, nil
 }
 

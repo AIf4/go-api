@@ -107,6 +107,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/productos/find-in": {
+            "post": {
+                "description": "Retorna los productos encontrados y los IDs no encontrados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Buscar productos por IDs",
+                "parameters": [
+                    {
+                        "description": "Lista de IDs a buscar",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.findInIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.findInIDsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/productos/many": {
             "post": {
                 "security": [
@@ -527,6 +579,38 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "string"
+                }
+            }
+        },
+        "handler.findInIDsRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "handler.findInIDsResponse": {
+            "type": "object",
+            "properties": {
+                "found": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.productoResponse"
+                    }
+                },
+                "not_found": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
